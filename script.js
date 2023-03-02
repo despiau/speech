@@ -1,30 +1,27 @@
+const recognition = new webkitSpeechRecognition();
+recognition.continuous = true;
+recognition.interimResults = true;
+
 const outputDiv = document.getElementById('output');
 const toggleButton = document.getElementById('toggleButton');
+
 let isRecording = false;
-let recognition = null;
-const apiKey = 'AIzaSyCIzpJWz_EMduRu17qLAUgVHSbX7V0M77g';
-
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-if (SpeechRecognition) {
-  recognition = new SpeechRecognition();
-  recognition.interimResults = true;
-} else {
-  console.log("Speech recognition not supported by this browser.");
-}
+let transcript = '';
 
 toggleButton.addEventListener('click', function() {
   if (isRecording) {
     recognition.stop();
     toggleButton.classList.remove('recording');
     toggleButton.innerText = 'Let\'s talk! 🗣️';
+    saveTranscript(transcript);
   } else {
     recognition.start();
     toggleButton.classList.add('recording');
     toggleButton.innerText = 'Stop talking 🤫';
+    transcript = '';
   }
   isRecording = !isRecording;
-
+  
   if (!isRecording) {
     outputDiv.style.display = 'none';
   } else {
@@ -33,46 +30,18 @@ toggleButton.addEventListener('click', function() {
 });
 
 recognition.onresult = function(event) {
-  let audioBlob = null;
-  for (let i = event.resultIndex; i < event.results.length; i++) {
-    if (event.results[i].isFinal) {
-      audioBlob = new Blob([event.results[i][0].transcript], {type: 'audio/wav'});
-    }
+  const result = event.results[event.results.length - 1];
+  const words = result[0].transcript.split(' ');
+  for (const word of words) {
+    transcript += word + ' ';
   }
-  if (audioBlob !== null) {
-    transcribeAudio(audioBlob, apiKey);
+  outputDiv.innerHTML = '';
+  for (const word of words) {
+    const span = document.createElement('span');
+    span.innerText = word + ' ';
+    outputDiv.appendChild(span);
   }
 };
-
-function transcribeAudio(audioBlob, apiKey) {
-  const url = `https://speech.googleapis.com/v1/speech:recognize?key=${apiKey}`;
-  const headers = new Headers({
-    'Content-Type': 'application/json'
-  });
-  const body = {
-    config: {
-      encoding: 'LINEAR16',
-      sampleRateHertz: 16000,
-      languageCode: 'en-US'
-    },
-    audio: {
-      content: audioBlob
-    }
-  };
-  const options = {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(body)
-  };
-  fetch(url, options)
-    .then(response => response.json())
-    .then(data => {
-      const transcript = data.results[0].alternatives[0].transcript;
-      outputDiv.innerHTML = transcript;
-      saveTranscript(transcript);
-    })
-    .catch(error => console.error(error));
-}
 
 function saveTranscript(transcript) {
   const element = document.createElement('a');
