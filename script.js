@@ -2,7 +2,7 @@ const outputDiv = document.getElementById('output');
 const toggleButton = document.getElementById('toggleButton');
 let isRecording = false;
 let recognition = null;
-const apiKey = 'AIzaSyCIzpJWz_EMduRu17qLAUgVHSbX7V0M77g'; // Replace with your own API key
+const apiKey = '<AIzaSyCIzpJWz_EMduRu17qLAUgVHSbX7V0M77g>';
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
