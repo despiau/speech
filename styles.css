@@ -28,21 +28,41 @@ body, html {
 }
 
 svg {
-    width: 50%;
-    max-width: 400px;
+    width: 20%;
+    max-width: 200px;
     height: auto;
     overflow: visible;
 }
 
 .wave {
+    animation: waveAnimation 2s ease-in-out infinite;
     transform-origin: center bottom;
 }
 
-.wave1 { transform: scaleY(1); }
-.wave2 { transform: scaleY(1); }
-.wave3 { transform: scaleY(1); }
-.wave4 { transform: scaleY(1); }
-.wave5 { transform: scaleY(1); }
+.wave1 {
+    animation-delay: 0s;
+}
+
+.wave2 {
+    animation-delay: 0.2s;
+}
+
+.wave3 {
+    animation-delay: 0.4s;
+}
+
+.wave4 {
+    animation-delay: 0.6s;
+}
+
+.wave5 {
+    animation-delay: 0.8s;
+}
+
+@keyframes waveAnimation {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(1.15); }
+}
 
 .transcript-container {
     display: flex;
