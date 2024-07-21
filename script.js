@@ -1,54 +1,45 @@
+const svg = document.getElementById('audio-waves');
+const waves = svg.querySelectorAll('.wave');
+const colors = ['#FFDD00', '#FF0000', '#00BFFF', '#00FF00'];
+let colorIndex = 0;
+
+function changeColor() {
+    waves.forEach(wave => {
+        wave.setAttribute('stroke', colors[colorIndex]);
+    });
+    colorIndex = (colorIndex + 1) % colors.length;
+}
+
+setInterval(changeColor, 1000);
+
 const recognition = new webkitSpeechRecognition();
 recognition.continuous = true;
 recognition.interimResults = true;
 
-const outputDiv = document.getElementById('output');
-const toggleButton = document.getElementById('toggleButton');
+const liveTranscriptElement = document.getElementById('live-transcript');
 
 let isRecording = false;
-let transcript = '';
-
-toggleButton.addEventListener('click', function() {
-  if (isRecording) {
-    recognition.stop();
-    toggleButton.classList.remove('recording');
-    toggleButton.innerText = 'Let\'s talk! 🗣️';
-    saveTranscript(transcript);
-  } else {
-    recognition.start();
-    toggleButton.classList.add('recording');
-    toggleButton.innerText = 'Stop talking 🤫';
-    transcript = '';
-  }
-  isRecording = !isRecording;
-  
-  if (!isRecording) {
-    outputDiv.style.display = 'none';
-  } else {
-    outputDiv.style.display = 'block';
-  }
-});
 
 recognition.onresult = function(event) {
-  const result = event.results[event.results.length - 1];
-  const words = result[0].transcript.split(' ');
-  for (const word of words) {
-    transcript += word + ' ';
-  }
-  outputDiv.innerHTML = '';
-  for (const word of words) {
-    const span = document.createElement('span');
-    span.innerText = word + ' ';
-    outputDiv.appendChild(span);
-  }
+    const result = event.results[event.results.length - 1];
+    const transcript = result[0].transcript.trim();
+    liveTranscriptElement.innerText = transcript;
 };
 
-function saveTranscript(transcript) {
-  const element = document.createElement('a');
-  const file = new Blob([transcript], {type: 'text/plain'});
-  element.href = URL.createObjectURL(file);
-  element.download = 'transcript.txt';
-  document.body.appendChild(element);
-  element.click();
-  document.body.removeChild(element);
-}
+recognition.onstart = function() {
+    isRecording = true;
+    liveTranscriptElement.style.display = 'block';
+    waves.forEach(wave => {
+        wave.style.animationDuration = '0.5s'; // Accelerate animation
+    });
+};
+
+recognition.onend = function() {
+    isRecording = false;
+    liveTranscriptElement.style.display = 'none';
+    waves.forEach(wave => {
+        wave.style.animationDuration = '2s'; // Reset animation
+    });
+};
+
+recognition.start();
