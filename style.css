@@ -28,15 +28,14 @@ body, html {
 }
 
 svg {
-    width: 20%;
-    max-width: 200px;
-    height: auto;
-    overflow: visible;
+    width: 20%;  /* Ajustar el tamaño del SVG */
+    max-width: 200px;  /* Ajustar el tamaño máximo del SVG */
+    height: auto;  /* Mantener la relación de aspecto */
 }
 
 .wave {
     animation: waveAnimation 2s ease-in-out infinite;
-    transform-origin: center bottom;
+    transform-origin: center bottom;  /* Asegurar que la animación se realice desde el centro inferior */
 }
 
 .wave1 {
@@ -61,7 +60,7 @@ svg {
 
 @keyframes waveAnimation {
     0%, 100% { transform: scaleY(1); }
-    50% { transform: scaleY(1.15); }
+    50% { transform: scaleY(1.1); }  /* Reducir la escala para que no se salga del contenedor */
 }
 
 .transcript-container {
