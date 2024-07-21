@@ -24,6 +24,12 @@ recognition.onresult = function(event) {
     const result = event.results[event.results.length - 1];
     const transcript = result[0].transcript.trim();
     liveTranscriptElement.innerText = transcript;
+
+    // Adjust waveform based on speech
+    let amplitude = 1.15 + (transcript.length % 10) / 10;
+    waves.forEach(wave => {
+        wave.style.transform = `scaleY(${amplitude})`;
+    });
 };
 
 recognition.onstart = function() {
@@ -39,6 +45,11 @@ recognition.onend = function() {
     liveTranscriptElement.style.display = 'none';
     waves.forEach(wave => {
         wave.style.animationDuration = '2s'; // Reset animation
+    });
+
+    // Reduce waveform amplitude when no speech is detected
+    waves.forEach(wave => {
+        wave.style.transform = 'scaleY(1)';
     });
 };
 
